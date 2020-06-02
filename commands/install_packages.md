@@ -3,7 +3,7 @@
 ## Distro v/s package managers
 
 | Linux Distro                          |Package Manager                         |
-|----------------|-------------------------------|-----------------------------|
+|----------------|-------------------------------|
 | Debian           |DPKG – Debian Package Management System            |
 | Red Hat          |Red Hat Package Manager           |
 | Arch Linux    |Pacman Package Manager|
