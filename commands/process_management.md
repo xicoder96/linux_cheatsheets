@@ -16,6 +16,9 @@
     ## Interactive process viewer (top alternative)
     htop
 
+    ## A snapshot of the current processes.
+    ps -eH -o pid,ppid,stat,vsz,rsz,class,ni,rtprio
+
     ## Kill process with process ID of pid
     kill <pid>
 
