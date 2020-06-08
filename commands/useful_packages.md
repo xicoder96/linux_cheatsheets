@@ -11,7 +11,7 @@
 2. net-tools
 - For more advanced tools and commands like `ifconfig`,`iwconfig`,....
 ```bash
-    sudo apt-get install tor proxychains
+    sudo apt-get install net-tools
 ```
 
 3. visual studio code
@@ -41,20 +41,31 @@
     sudo apt-get install tor proxychains
 ```
 
-
 7. Snort
 - Intrution Detection System.
 ```bash
     sudo apt-get install snort
-    sudo snort 
+    sudo snort -T -c /etc/snort/snort.conf
     sudo snort -A console -q -c /etc/snort/snort.conf -i <interface> # Run Snort in IDS mode 
 
 ```
 
-
-
-. vlc
+8. vlc
 - One of the best open source video player.
 ```bash
     sudo apt-get install vlc
+```
+
+9. tlp
+- Apply laptop power saving settings.
+```bash
+    sudo apt-get install tlp
+    sudo tlp start
+```
+
+10. gnome-tweaks
+- Advanced cutomization options of Ubuntu theme.
+```bash
+    sudo apt-get install gnome-tweaks
+    sudo tlp start
 ```
