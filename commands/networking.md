@@ -25,6 +25,9 @@
     ## Display DNS ip address for domain
     host domain
 
+    ## Another utility to investigate sockets
+    ss -a
+
     ## Display the network address of the host name.
     hostname -i
 

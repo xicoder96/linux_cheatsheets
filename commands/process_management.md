@@ -16,8 +16,8 @@
     ## Interactive process viewer (top alternative)
     htop
 
-    ## A snapshot of the current processes.
-    ps -eH -o pid,ppid,stat,vsz,rsz,class,ni,rtprio
+    ## A snapshot of the current processes.(pid process id, ppid parent processid,uname username,stat current state,vsz addressspace based on active apps,rsz phy mem allocated,class scheduling policy,ni nice values for non realtime precoess,rtprio realtime prio,command)
+    ps -eH -o pid,ppid,uname,stat,vsz,rsz,class,ni,rtprio,command | less
 
     ## Kill process with process ID of pid
     kill <pid>
