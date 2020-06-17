@@ -359,4 +359,3 @@
 - [Edureka!](https://www.edureka.co/blog/nmap-tutorial/)
 - [Hacker Target](https://hackertarget.com/nmap-tutorial/)
 - [DEFCON - Hacking nmap conference](https://youtu.be/bKUjyeQ78AU)
-
