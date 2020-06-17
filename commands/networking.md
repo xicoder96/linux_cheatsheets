@@ -40,5 +40,10 @@
     ## Display listening tcp and udp ports and corresponding programs
     netstat -tulpn
 
+    ## Capture and display all packets on interface eth0
+    sudo tcpdump -i eth0
+
+    ## Monitor all traffic on port 80 ( HTTP )
+    sudo tcpdump -i eth0 'port 80'
 
 ```
