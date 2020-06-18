@@ -47,10 +47,11 @@ lo        no wireless extensions.
     - In order to capture the encrypted password, we need to have the client authenticate against the AP. 
     - If they're already authenticated, we can de-authenticate them (kick them off) and their system will automatically re-authenticate, whereby we can grab their encrypted password in the process. Let's open another terminal and type:
 ```bash
-    [root] aireplay-ng --deauth 100 -a 08:86:30:74:22:76 wlp9s0f0mon
+    [root] aireplay-ng --deauth 100 -a 08:86:30:74:22:76 -c 54:DC:1D:4C:39:96 wlp9s0f0mon
 ```    
 - `100` is the number of de-authenticate frames you want to send
 - `08:86:30:74:22:76` is the BSSID of the AP
+- `54:DC:1D:4C:39:96` is the BSSID of the Client
 - `wlp9s0f0mon` is the monitoring wireless adapter
 
 6. Capture the Handshake
