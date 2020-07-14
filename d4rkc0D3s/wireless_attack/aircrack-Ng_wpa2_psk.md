@@ -68,3 +68,5 @@ lo        no wireless extensions.
 
 ## References
 - [Nullbyte - Cracking WPA2-PSK Passwords Using Aircrack-Ng](https://null-byte.wonderhowto.com/how-to/hack-wi-fi-cracking-wpa2-psk-passwords-using-aircrack-ng-0148366/)
+- [AirCrack-Ng - Docs](https://www.aircrack-ng.org/documentation.html)
+- [AirCrack-Ng - Tutorials](https://www.aircrack-ng.org/doku.php?id=tutorial)

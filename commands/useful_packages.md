@@ -69,3 +69,27 @@
     sudo apt-get install gnome-tweaks
     sudo tlp start
 ```
+
+11. rkhunter
+- Advanced Rootkit hunter tool to check for rootkit.
+```bash
+    sudo apt-get install rkhunter
+    sudo rkhunter --update
+    sudo rkhunter --propupd
+    sudo rkhunter --check
+```
+
+12. chkrootkit
+- Determine whether the system is infected with a rootkit
+```bash
+    sudo apt-get install chkrootkit
+    sudo chkrootkit
+```
+
+13. clamAV
+- scan files and directories for viruses and known malwares
+```bash
+    sudo apt-get install clamav
+    sudo freshclam
+    sudo clamscan ~
+```

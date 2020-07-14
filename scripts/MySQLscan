@@ -1,0 +1,6 @@
+# Nmap 7.80 scan initiated Sun Jun 28 20:45:44 2020 as: nmap -sS -p 53 -oG MySQLscan 192.168.43.0/24
+Host: 192.168.43.1 (_gateway)	Status: Up
+Host: 192.168.43.1 (_gateway)	Ports: 53/open/tcp//domain///
+Host: 192.168.43.89 (cicada3301)	Status: Up
+Host: 192.168.43.89 (cicada3301)	Ports: 53/closed/tcp//domain///
+# Nmap done at Sun Jun 28 20:45:48 2020 -- 256 IP addresses (2 hosts up) scanned in 3.45 seconds
